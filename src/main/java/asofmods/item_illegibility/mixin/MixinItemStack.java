@@ -24,12 +24,15 @@ public abstract class MixinItemStack {
 
     @Shadow public abstract Item getItem();
 
-    @Inject(at = @At("HEAD"), method = "getHoverName", cancellable = true)
+    @Shadow public abstract boolean hasCustomHoverName();
+
+    @Inject(at = @At("TAIL"), method = "getHoverName", cancellable = true)
     public void getHoverName(CallbackInfoReturnable<Component> cir) {
+        if(this.hasCustomHoverName()) return;
         if(Item_illegibility.nameManager.hasName(this.copy())) {
             cir.setReturnValue(Component.literal(Item_illegibility.nameManager.getName(this.copy())));
         } else {
-            cir.setReturnValue(Component.literal("no name??").withStyle(UNNAMED_STYLE));
+            cir.setReturnValue(Component.empty().append(cir.getReturnValue()).withStyle(UNNAMED_STYLE));
         }
 
     }

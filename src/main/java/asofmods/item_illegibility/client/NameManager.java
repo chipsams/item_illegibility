@@ -28,7 +28,6 @@ public class NameManager {
     }
 
     private Path configPath() {
-        Minecraft.getInstance().level.getServer();
         return Path.of(FMLPaths.CONFIGDIR.get() + "/item_illegibility_item_names.json");
     }
 
