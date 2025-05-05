@@ -1,8 +1,5 @@
 package asofmods.item_illegibility.client;
 
-import asofmods.item_illegibility.Item_illegibility;
-import net.minecraft.client.Minecraft;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.loading.FMLPaths;
 
@@ -16,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.mojang.text2speech.Narrator.LOGGER;
 import static net.minecraft.util.datafix.fixes.BlockEntitySignTextStrictJsonFix.GSON;
 
 public class NameManager {
@@ -40,7 +38,7 @@ public class NameManager {
         try (var input = Files.newInputStream(configPath())) {
             names = GSON.fromJson(new InputStreamReader(input, StandardCharsets.UTF_8), Map.class);
         } catch (IOException e) {
-            Item_illegibility.LOGGER.warn("Unable to load config file!");
+            LOGGER.warn("Unable to load config file!");
         }
     }
 
@@ -48,7 +46,7 @@ public class NameManager {
         try (var output = Files.newOutputStream(configPath()); var writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
             GSON.toJson(names, writer);
         } catch (IOException e) {
-            Item_illegibility.LOGGER.warn("Unable to save config file!");
+            LOGGER.warn("Unable to save config file!");
         }
     }
 
@@ -57,10 +55,10 @@ public class NameManager {
     }
 
     public void setName(ItemStack itemStack, String name) {
-        if(itemStack.isEmpty()) Item_illegibility.LOGGER.error("nothing already has a name, that's the whole point!!");
-        if(Objects.equals(name, "")) Item_illegibility.LOGGER.error("A name of length zero.. that's strictly absurd..");
+        if(itemStack.isEmpty()) LOGGER.error("nothing already has a name, that's the whole point!!");
+        if(Objects.equals(name, "")) LOGGER.error("A name of length zero.. that's strictly absurd..");
 
-        Item_illegibility.LOGGER.info(String.format("set name of %s to '%s'",itemStack.getDescriptionId(),name));
+        LOGGER.info(String.format("set name of %s to '%s'",itemStack.getDescriptionId(),name));
         names.put(getKey(itemStack),name);
         save();
     }
