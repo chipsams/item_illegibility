@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "asofmods.item_illegibility.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "item_illegibility.refmap.json",
+  "mixins": [
+    "MixinItemStack"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
