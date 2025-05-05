@@ -1,28 +1,23 @@
 package asofmods.item_illegibility.client;
 
-import asofmods.item_illegibility.Item_illegibility;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 
 import java.util.Objects;
+
+import static asofmods.item_illegibility.client.ClientMod.MODID;
+import static asofmods.item_illegibility.client.ClientMod.nameManager;
 
 public class NamingScreen extends Screen {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -44,7 +39,7 @@ public class NamingScreen extends Screen {
         super(Component.translatable("item_illegibility.gui.naming_screen.title"));
 
         this.itemStack = itemStack;
-        this.initialItemName = Item_illegibility.nameManager.getNameOrEmpty(itemStack);
+        this.initialItemName = nameManager.getNameOrEmpty(itemStack);
     }
 
     private EditBox editBox;
@@ -79,7 +74,7 @@ public class NamingScreen extends Screen {
 
     private boolean canSubmit(){
         // if the name wouldn't change upon submit
-        if(Objects.equals(Item_illegibility.nameManager.getNameOrEmpty(itemStack),editBox.getValue())) return false;
+        if(Objects.equals(nameManager.getNameOrEmpty(itemStack),editBox.getValue())) return false;
         // if there is no name input at all
         if(Objects.equals(editBox.getValue(), "")) return false;
 
@@ -96,7 +91,7 @@ public class NamingScreen extends Screen {
     public boolean keyPressed(int p_96552_, int p_96553_, int p_96554_) {
 
         if(p_96552_ == InputConstants.KEY_RETURN && canSubmit()){
-            Item_illegibility.nameManager.setName(itemStack,editBox.getValue());
+            nameManager.setName(itemStack,editBox.getValue());
             assert minecraft.player != null;
             minecraft.player.playSound(new SoundEvent(new ResourceLocation("minecraft","ui.cartography_table.take_result")));
             return true;
@@ -124,7 +119,7 @@ public class NamingScreen extends Screen {
         this.renderBackground(pose);
 
 
-        RenderSystem.setShaderTexture(0, new ResourceLocation(Item_illegibility.MODID,"textures/gui/item_naming.png"));
+        RenderSystem.setShaderTexture(0, new ResourceLocation(MODID,"textures/gui/item_naming.png"));
         int width = minecraft.getWindow().getGuiScaledWidth();
         int height = minecraft.getWindow().getGuiScaledHeight();
         int topLeftX = width/2-BACKGROUND_WIDTH/2;

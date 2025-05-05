@@ -1,6 +1,5 @@
 package asofmods.item_illegibility.client;
 
-import asofmods.item_illegibility.Item_illegibility;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
@@ -29,8 +28,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Mod(Item_illegibility.MODID)
+@Mod(ClientMod.MODID)
 public class ClientMod {
+    // Define mod id in a common place for everything to reference
+    public static final String MODID = "item_illegibility";
+    // Directly reference a slf4j logger
+    public static final Logger LOGGER = LogUtils.getLogger();
+
+    public static NameManager nameManager = new NameManager();
 
     static Lazy<KeyMapping> NAME_ITEM_KEYMAPPING = Lazy.of(()->new KeyMapping(
             "key.itemillegiblity.name_item",
@@ -46,7 +51,7 @@ public class ClientMod {
         var context = FMLJavaModLoadingContext.get();
         IEventBus eventBus = context.getModEventBus();
 
-        Item_illegibility.LOGGER.info("TRYING TO REGISTER LISTENER");
+        LOGGER.info("TRYING TO REGISTER LISTENER");
         eventBus.addListener(this::onRegisterBindings);
 
         MinecraftForge.EVENT_BUS.addListener(this::onClientTick);
@@ -55,7 +60,7 @@ public class ClientMod {
 
     // Event is on the mod event bus only on the physical client
     public void onRegisterBindings(RegisterKeyMappingsEvent event) {
-        Item_illegibility.LOGGER.info("BINDING REGISTRY");
+        LOGGER.info("BINDING REGISTRY");
         event.register(NAME_ITEM_KEYMAPPING.get());
     }
 
@@ -70,7 +75,7 @@ public class ClientMod {
         if (event.phase == TickEvent.Phase.END) { // Only call code once as the tick event is called twice every tick
             queuedActions.clear();
             while (NAME_ITEM_KEYMAPPING.get().consumeClick()) {
-                Item_illegibility.LOGGER.info("NAMETHING CLICKED!!");
+                LOGGER.info("NAMETHING CLICKED!!");
                 if(Minecraft.getInstance().screen == null){
                     ItemStack heldItem = Minecraft.getInstance().player.getMainHandItem();
                     if(!heldItem.isEmpty()) Minecraft.getInstance().setScreen(new NamingScreen(heldItem));
@@ -88,10 +93,10 @@ public class ClientMod {
         // LOGGER.info("HELLO FROM TOOLTIP EVENT");
         //createDescriptionsFromItemStack(event.getItemStack(), event.getToolTip());
         for (TooltipQueuedAction action : queuedActions ) {
-            Item_illegibility.LOGGER.info(action.name());
+            LOGGER.info(action.name());
             switch (action) {
                 case NAME_THING -> {
-                    Item_illegibility.LOGGER.info(String.format("WE GOT EM.. %s", event.getItemStack()));
+                    LOGGER.info(String.format("WE GOT EM.. %s", event.getItemStack()));
                     Minecraft.getInstance().setScreen(new NamingScreen(event.getItemStack()));
                 }
                 default -> { }
@@ -107,8 +112,8 @@ public class ClientMod {
             Component firstLine = toolTip.get(0);
             toolTip.clear();
             toolTip.add(firstLine);
-        }else if(Item_illegibility.nameManager.hasName(itemStack)){
-            String text = Item_illegibility.nameManager.getName(itemStack);
+        }else if(nameManager.hasName(itemStack)){
+            String text = nameManager.getName(itemStack);
             MutableComponent component = Component.literal(text);
             component.withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE));
             toolTip.clear();
