@@ -28,7 +28,8 @@ public abstract class MixinItemStack {
         if(nameManager.hasName(this.copy())) {
             cir.setReturnValue(Component.literal(nameManager.getName(this.copy())));
         } else {
-            cir.setReturnValue(Component.empty().append(cir.getReturnValue()).withStyle(UNNAMED_STYLE));
+            cir.setReturnValue(Component.empty());
+            //cir.setReturnValue(Component.empty().append(cir.getReturnValue()).withStyle(UNNAMED_STYLE));
         }
 
     }

@@ -54,6 +54,12 @@ public class NameManager {
         return itemStack.getDescriptionId();
     }
 
+    public void clearName(ItemStack itemStack) {
+        if(itemStack.isEmpty()) LOGGER.error("nothing already has a name, that's the whole point!!");
+        names.remove(getKey(itemStack));
+        save();
+    }
+
     public void setName(ItemStack itemStack, String name) {
         if(itemStack.isEmpty()) LOGGER.error("nothing already has a name, that's the whole point!!");
         if(Objects.equals(name, "")) LOGGER.error("A name of length zero.. that's strictly absurd..");

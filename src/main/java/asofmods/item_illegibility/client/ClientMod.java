@@ -72,13 +72,14 @@ public class ClientMod {
 
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
+
         if (event.phase == TickEvent.Phase.END) { // Only call code once as the tick event is called twice every tick
             queuedActions.clear();
             while (NAME_ITEM_KEYMAPPING.get().consumeClick()) {
                 LOGGER.info("NAMETHING CLICKED!!");
                 if(Minecraft.getInstance().screen == null){
                     ItemStack heldItem = Minecraft.getInstance().player.getMainHandItem();
-                    if(!heldItem.isEmpty()) Minecraft.getInstance().setScreen(new NamingScreen(heldItem));
+                    if(!heldItem.isEmpty()) Minecraft.getInstance().setScreen(new NamingScreen(heldItem,Minecraft.getInstance().screen));
                 }else{
                     queuedActions.add(TooltipQueuedAction.NAME_THING);
                 }
@@ -91,13 +92,16 @@ public class ClientMod {
     @SubscribeEvent
     public void onItemTooltipEvent(ItemTooltipEvent event) {
         // LOGGER.info("HELLO FROM TOOLTIP EVENT");
+
+        if(!nameManager.hasName(event.getItemStack())) event.getToolTip().remove(0);
+
         //createDescriptionsFromItemStack(event.getItemStack(), event.getToolTip());
         for (TooltipQueuedAction action : queuedActions ) {
             LOGGER.info(action.name());
             switch (action) {
                 case NAME_THING -> {
                     LOGGER.info(String.format("WE GOT EM.. %s", event.getItemStack()));
-                    Minecraft.getInstance().setScreen(new NamingScreen(event.getItemStack()));
+                    Minecraft.getInstance().setScreen(new NamingScreen(event.getItemStack(), Minecraft.getInstance().screen));
                 }
                 default -> { }
             }

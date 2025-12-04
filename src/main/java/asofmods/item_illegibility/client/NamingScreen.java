@@ -34,15 +34,22 @@ public class NamingScreen extends Screen {
 
     private ItemStack itemStack;
     private String itemName = "";
+    private Screen prevScreen;
 
-    public NamingScreen(ItemStack itemStack) {
+    public NamingScreen(ItemStack itemStack, Screen screen) {
         super(Component.translatable("item_illegibility.gui.naming_screen.title"));
 
+        prevScreen = screen;
         this.itemStack = itemStack;
         this.initialItemName = nameManager.getNameOrEmpty(itemStack);
     }
 
     private EditBox editBox;
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
 
     @Override
     protected void init() {
@@ -76,9 +83,18 @@ public class NamingScreen extends Screen {
         // if the name wouldn't change upon submit
         if(Objects.equals(nameManager.getNameOrEmpty(itemStack),editBox.getValue())) return false;
         // if there is no name input at all
-        if(Objects.equals(editBox.getValue(), "")) return false;
+        //if(Objects.equals(editBox.getValue(), "")) return false;
 
         return true;
+    }
+
+    @Override
+    public void onClose() {
+        if(this.prevScreen != null){
+            minecraft.setScreen(prevScreen);
+        }else{
+            super.onClose();
+        }
     }
 
     @Override
@@ -91,7 +107,11 @@ public class NamingScreen extends Screen {
     public boolean keyPressed(int p_96552_, int p_96553_, int p_96554_) {
 
         if(p_96552_ == InputConstants.KEY_RETURN && canSubmit()){
-            nameManager.setName(itemStack,editBox.getValue());
+            if(Objects.equals(editBox.getValue(), "")){
+                nameManager.clearName(itemStack);
+            }else{
+                nameManager.setName(itemStack,editBox.getValue());
+            }
             assert minecraft.player != null;
             minecraft.player.playSound(new SoundEvent(new ResourceLocation("minecraft","ui.cartography_table.take_result")));
             return true;
